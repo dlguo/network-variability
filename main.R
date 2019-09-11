@@ -1,4 +1,5 @@
 library(igraph)
+library(ergm)
 library(ggplot2)
 
 source("./net_metrics.R")
