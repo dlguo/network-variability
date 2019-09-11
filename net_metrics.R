@@ -6,6 +6,34 @@ TransitivitySeries <- function(glist) sapply(glist, transitivity)
 # assoratativity of degree of a igraph list
 AssortativitySeries <- function(glist) sapply(glist, assortativity_degree)
 
+# local assortativity
+LocAssor <- function(gr){
+  m1=ecount(gr)
+  n1=vcount(gr)
+  if(m1==0)
+    return(rep(0,n1))
+  alpha=numeric(n1)
+  tmp=ends(gr,1:m1,names=FALSE)
+  d1=degree(gr)
+  for(i in 1:m1){
+    alpha[tmp[i,1]]=alpha[tmp[i,1]]+((d1[tmp[i,1]]-1)*(d1[tmp[i,2]]-1))/(2*m1)
+    alpha[tmp[i,2]]=alpha[tmp[i,2]]+((d1[tmp[i,1]]-1)*(d1[tmp[i,2]]-1))/(2*m1)
+  }
+  dd=degree_distribution(gr)
+  rd=c()
+  for(i in 1:(length(dd)-1)){
+    rd[i]=(i*dd[(i+1)])/sum((0:(length(dd)-1))*dd)
+  }
+  rd1=sum((0:(length(rd)-1))*rd)
+  beta=(d1*rd1^2)/(2*m1)
+  rd2=sum(((0:(length(rd)-1))^2)*rd)
+  sig=rd2-rd1^2
+  return((alpha-beta)/sig)
+}
+
+# local transitivity
+LocTrans <- function(gr) transitivity(gr, 'local', isolates = 'zero')
+
 # entropy of a probability vector
 entropyProb <- function(prob, base=length(prob)) {
   if (length(prob) == 1) return(0)
@@ -56,3 +84,4 @@ GeodesicEntropy <- function(adjmat, rm.neighbor=F) {
   rList[['entropy_mean_offdiag']] <- mean(entropy_mat[lower.tri(entropy_mat, diag = F)])
   rList
 }
+
