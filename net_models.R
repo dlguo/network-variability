@@ -23,5 +23,6 @@ SimDK <- function(inp.gr, size) {
     DK.pop[[i]] <- simplify(graph_from_edgelist(as.matrix(read.table('./dk2.5_inpgr'))+1, directed = F))
     file.remove(c('./dk2.5_inpgr', './E_vs_T.dat'))
   }
+  file.remove('./inpgr')
   DK.pop
 }
