@@ -85,3 +85,18 @@ GeodesicEntropy <- function(adjmat, rm.neighbor=F) {
   rList
 }
 
+dissim_space<-function(inp.gr, inp.pop){ 	# inp.gr is the input network and inp.pop is the population
+  net.count=length(inp.pop)
+  inp.dd=degree(inp.gr)
+  inp.la=locAssor(inp.gr)
+  inp.lt=locTrans(inp.gr)
+  diss.space=as.data.frame(matrix(0, nrow=net_count, ncol=3))
+  colnames(diss.space)=c('Degree', 'Local Assortativity', 'Local Transitivity')
+  g1=list()
+  for(j in 1:net.count){
+    diss.space[j,1]=ks.test(inp.dd, degree(inp.pop[[j]]))$statistic
+    diss.space[j,2]=ks.test(inp.la, locAssor(inp.pop[[j]]))$statistic
+    diss.space[j,3]=ks.test(inp.lt, LocTrans(inp.pop[[j]]))$statistic
+  }
+  return(diss.space)
+}
