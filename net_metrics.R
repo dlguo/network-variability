@@ -85,18 +85,30 @@ GeodesicEntropy <- function(adjmat, rm.neighbor=F) {
   rList
 }
 
-dissim_space<-function(inp.gr, inp.pop){ 	# inp.gr is the input network and inp.pop is the population
+DissimSpace <- function(inp.gr, inp.pop){ 	# inp.gr is the input network and inp.pop is the population
   net.count=length(inp.pop)
   inp.dd=degree(inp.gr)
-  inp.la=locAssor(inp.gr)
-  inp.lt=locTrans(inp.gr)
-  diss.space=as.data.frame(matrix(0, nrow=net_count, ncol=3))
+  inp.la=LocAssor(inp.gr)
+  inp.lt=LocTrans(inp.gr)
+  diss.space=as.data.frame(matrix(0, nrow=net.count, ncol=3))
   colnames(diss.space)=c('Degree', 'Local Assortativity', 'Local Transitivity')
   g1=list()
   for(j in 1:net.count){
-    diss.space[j,1]=ks.test(inp.dd, degree(inp.pop[[j]]))$statistic
-    diss.space[j,2]=ks.test(inp.la, locAssor(inp.pop[[j]]))$statistic
-    diss.space[j,3]=ks.test(inp.lt, LocTrans(inp.pop[[j]]))$statistic
+    diss.space[j,1]=suppressWarnings(ks.test(inp.dd, degree(inp.pop[[j]])))$statistic
+    diss.space[j,2]=suppressWarnings(ks.test(inp.la, LocAssor(inp.pop[[j]])))$statistic
+    diss.space[j,3]=suppressWarnings(ks.test(inp.lt, LocTrans(inp.pop[[j]])))$statistic
   }
   return(diss.space)
+}
+
+GetDissimModel <- function(inp.pop, simFuncList) {
+  size <- length(inp.pop)
+  inp.gr <- sample(inp.pop, 1)[[1]]
+  dissim.df <- cbind(data.frame(model='real'), as.data.frame(DissimSpace(inp.gr, inp.pop)))
+  for (funcName in names(simFuncList)) {
+    SimFunc <- simFuncList[[funcName]]
+    sim.pop <- SimFunc(inp.gr, size)
+    dissim.df <- rbind(dissim.df, cbind(data.frame(model=funcName), as.data.frame(DissimSpace(inp.gr, sim.pop))))
+  }
+  dissim.df
 }
