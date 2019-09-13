@@ -10,8 +10,6 @@ SimERGM <- function(inp.gr, size) {
   net=network(adj, matrix.type="adjacency", directed=FALSE)
   fit1 <- ergm(net ~ edges + gwdegree(1,fixed=FALSE)+gwesp(1,fixed=FALSE)+gwdsp(0,fixed=FALSE), control=control.ergm(MCMLE.maxit=50))    #MCMLE.maxit can be set appropriately
   lapply(1:size, function(x) graph.adjacency(as.matrix(simulate(fit1)), 'undirected'))
-  sim1 <- simulate(fit1)
-  ERGM.pop=graph.adjacency(as.matrix(sim1), 'undirected')
 }
 
 SimDK <- function(inp.gr, size) {
